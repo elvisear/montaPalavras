@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Filtrador de Palavras</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Filtrador de Palavras</h1>
+        </header>
+        
+        <main class="content">
+            <section class="form-section">
+                <div class="card">
+                    <form id="wordFilterForm">
+                        <div class="form-group">
+                            <label for="letras">Letras permitidas (separadas por vírgula)</label>
+                            <input type="text" id="letras" name="letras" required 
+                                   placeholder="Ex: A,B,C,D,E">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="obrigatoria">Letra obrigatória</label>
+                            <input type="text" id="obrigatoria" name="obrigatoria" 
+                                   maxlength="1" required placeholder="Ex: A">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="tamanho">Tamanho da palavra</label>
+                            <input type="number" id="tamanho" name="tamanho" 
+                                   required placeholder="Ex: 5">
+                        </div>
+                        
+                        <button type="submit">Filtrar Palavras</button>
+                    </form>
+                </div>
+            </section>
+
+            <section class="results-section">
+                <div id="results"></div>
+            </section>
+        </main>
+    </div>
+
+    <div id="cache-stats"></div>
+
+    <button id="addWordBtn" class="floating-button">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+    </button>
+
+    <div id="addWordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Adicionar Nova Palavra</h2>
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" id="novaPalavra" placeholder="Digite uma palavra">
+                    <button id="inserirPalavra">Inserir</button>
+                </div>
+                <div id="modalMessage" class="modal-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('wordFilterForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            document.getElementById('results').innerHTML = `
+                <div class="card">
+                    <h2>Processando...</h2>
+                    <div class="loading-spinner"></div>
+                </div>
+            `;
+            
+            const formData = new FormData();
+            formData.append('letras', document.getElementById('letras').value);
+            formData.append('obrigatoria', document.getElementById('obrigatoria').value);
+            formData.append('tamanho', document.getElementById('tamanho').value);
+
+            try {
+                const response = await fetch('/process', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    document.getElementById('results').innerHTML = `
+                        <div class="error">${data.error}</div>
+                    `;
+                } else {
+                    document.getElementById('results').innerHTML = `
+                        <div class="results-card card">
+                            <h2>Palavras encontradas (${data.total} de ${data.dicionario_total})</h2>
+                            <ul class="word-list">
+                                ${data.results.map(palavra => `<li>${palavra}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('results').innerHTML = `
+                    <div class="error">Erro ao processar: ${error.message}</div>
+                `;
+            }
+        });
+
+        async function updateCacheStats() {
+            try {
+                const response = await fetch('/cache-stats');
+                const stats = await response.json();
+                document.getElementById('cache-stats').innerHTML = `
+                    Palavras no dicionário: ${stats.dicionario_size}
+                `;
+            } catch (error) {
+                console.error('Erro ao atualizar estatísticas:', error);
+            }
+        }
+
+        updateCacheStats();
+
+        const modal = document.getElementById('addWordModal');
+        const addWordBtn = document.getElementById('addWordBtn');
+        const closeBtn = document.querySelector('.close-button');
+        const novaPalavraInput = document.getElementById('novaPalavra');
+        const inserirBtn = document.getElementById('inserirPalavra');
+        const modalMessage = document.getElementById('modalMessage');
+
+        function showModal() {
+            modal.classList.add('show');
+            novaPalavraInput.focus();
+        }
+
+        function hideModal() {
+            modal.classList.remove('show');
+            novaPalavraInput.value = '';
+            modalMessage.innerHTML = '';
+        }
+
+        function showMessage(message, isError = false) {
+            modalMessage.innerHTML = `<div class="${isError ? 'error' : 'success'}">${message}</div>`;
+            novaPalavraInput.value = '';  // Limpa o input em todos os casos
+            novaPalavraInput.focus();     // Mantém o foco no input
+            setTimeout(() => {
+                modalMessage.innerHTML = '';
+            }, 3000);
+        }
+
+        async function inserirPalavra() {
+            const palavra = novaPalavraInput.value.trim();
+            if (!palavra) return;
+
+            try {
+                const response = await fetch('/adicionar-palavra', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ palavra })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage(data.message);
+                    updateCacheStats();
+                } else {
+                    // Mostra a palavra que já existe na mensagem de erro
+                    const mensagemErro = data.error.includes('já existe') 
+                        ? `A palavra "${palavra}" já existe no dicionário`
+                        : data.error;
+                    showMessage(mensagemErro, true);
+                }
+            } catch (error) {
+                showMessage('Erro ao adicionar palavra', true);
+            }
+        }
+
+        addWordBtn.addEventListener('click', showModal);
+        closeBtn.addEventListener('click', hideModal);
+
+        novaPalavraInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                inserirPalavra();
+            }
+        });
+
+        inserirBtn.addEventListener('click', inserirPalavra);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('show')) {
+                hideModal();
+            }
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                hideModal();
+            }
+        });
+    </script>
+</body>
+</html>
