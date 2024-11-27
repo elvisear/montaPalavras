@@ -5,71 +5,177 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Filtrador de Palavras</h1>
-        </header>
-        
-        <main class="content">
-            <section class="form-section">
-                <div class="card">
-                    <form id="wordFilterForm">
-                        <div class="form-group">
-                            <label for="letras">Letras permitidas (separadas por vírgula)</label>
-                            <input type="text" id="letras" name="letras" required 
-                                   placeholder="Ex: A,B,C,D,E">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="obrigatoria">Letra obrigatória</label>
-                            <input type="text" id="obrigatoria" name="obrigatoria" 
-                                   maxlength="1" required placeholder="Ex: A">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="tamanho">Tamanho da palavra</label>
-                            <input type="number" id="tamanho" name="tamanho" 
-                                   required placeholder="Ex: 5">
-                        </div>
-                        
-                        <button type="submit">Filtrar Palavras</button>
-                    </form>
-                </div>
-            </section>
-
-            <section class="results-section">
-                <div id="results"></div>
-            </section>
-        </main>
-    </div>
-
-    <div id="cache-stats"></div>
-
-    <button id="addWordBtn" class="floating-button">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-    </button>
-
-    <div id="addWordModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Adicionar Nova Palavra</h2>
-                <button class="close-button">&times;</button>
+    <div class="app-container">
+        <!-- Abas laterais -->
+        <div class="sidebar">
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="filtrador">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
+                    </svg>
+                    Filtrador
+                </button>
+                <button class="tab-button" data-tab="admin">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    Administração
+                </button>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <input type="text" id="novaPalavra" placeholder="Digite uma palavra">
-                    <button id="inserirPalavra">Inserir</button>
+            <div id="cache-stats"></div>
+            <div id="version-info"></div>
+        </div>
+
+        <!-- Conteúdo das abas -->
+        <div class="content-area">
+            <!-- Aba do Filtrador -->
+            <div class="tab-content active" id="filtrador-content">
+                <div class="content-header">
+                    <h1>Filtrador de Palavras</h1>
                 </div>
-                <div id="modalMessage" class="modal-message"></div>
+                
+                <div class="content-body">
+                    <div class="form-section">
+                        <div class="card">
+                            <form id="wordFilterForm">
+                                <div class="form-group">
+                                    <label for="letras">Letras permitidas (separadas por vírgula)</label>
+                                    <input type="text" id="letras" name="letras" required 
+                                           placeholder="Ex: A,B,C,D,E">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="obrigatoria">Letra obrigatória</label>
+                                    <input type="text" id="obrigatoria" name="obrigatoria" 
+                                           maxlength="1" required placeholder="Ex: A">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="tamanho">Tamanho da palavra</label>
+                                    <input type="number" id="tamanho" name="tamanho" 
+                                           required placeholder="Ex: 5">
+                                </div>
+                                
+                                <button type="submit">Filtrar Palavras</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="results-section">
+                        <div id="results"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aba de Administração -->
+            <div class="tab-content" id="admin-content">
+                <div class="content-header">
+                    <h1>Administração de Palavras</h1>
+                </div>
+                
+                <div class="content-body">
+                    <div class="form-section">
+                        <div class="card">
+                            <div class="toolbar">
+                                <div class="filter-form">
+                                    <div class="filter-group">
+                                        <label for="atributoFilter">Atributo</label>
+                                        <select id="atributoFilter">
+                                            <option value="">Todos os atributos</option>
+                                            <option value="verbo">Verbo</option>
+                                            <option value="nome">Nome</option>
+                                            <option value="cidade">Cidade</option>
+                                            <option value="outros">Outros</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="filter-group">
+                                        <label for="tamanhoFilter">Tamanho da palavra</label>
+                                        <input type="number" id="tamanhoFilter" placeholder="Ex: 5" min="1">
+                                    </div>
+                                    
+                                    <div class="filter-group">
+                                        <label for="searchInput">Buscar palavra</label>
+                                        <input type="text" id="searchInput" placeholder="Digite parte da palavra...">
+                                    </div>
+                                    
+                                    <button id="searchButton" class="search-button">Buscar</button>
+                                </div>
+                                
+                                <div class="pagination-info">
+                                    <select id="perPage">
+                                        <option value="25">25 por página</option>
+                                        <option value="50" selected>50 por página</option>
+                                        <option value="100">100 por página</option>
+                                        <option value="500">500 por página</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <span id="totalInfo"></span>
+                        </div>
+                    </div>
+
+                    <div class="results-section">
+                        <div class="table-container">
+                            <div class="table-actions">
+                                <button id="deleteSelected" class="btn-delete-selected" disabled>
+                                    Excluir Selecionados (0)
+                                </button>
+                            </div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th class="checkbox-column">
+                                            <input type="checkbox" id="selectAll">
+                                        </th>
+                                        <th>Palavra Original</th>
+                                        <th>Sem Acento</th>
+                                        <th>Tamanho</th>
+                                        <th>Atributo</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="palavrasTable">
+                                    <!-- Preenchido via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="pagination">
+                            <button id="prevPage" disabled>&lt; Anterior</button>
+                            <span id="pageInfo">Página 1 de 1</span>
+                            <button id="nextPage" disabled>Próxima &gt;</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Modal de Adição/Edição -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Editar Palavra</h2>
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" id="editPalavra" placeholder="Digite a palavra">
+                    <button id="salvarEdicao">Salvar</button>
+                </div>
+                <div id="editModalMessage" class="modal-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
     <script>
         document.getElementById('wordFilterForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -127,14 +233,26 @@
             }
         }
 
-        updateCacheStats();
+        async function updateVersion() {
+            try {
+                const response = await fetch('/version');
+                const data = await response.json();
+                document.getElementById('version-info').innerHTML = `
+                    Versão: ${data.version}
+                `;
+            } catch (error) {
+                console.error('Erro ao obter versão:', error);
+            }
+        }
 
-        const modal = document.getElementById('addWordModal');
-        const addWordBtn = document.getElementById('addWordBtn');
+        updateCacheStats();
+        updateVersion();
+
+        const modal = document.getElementById('editModal');
         const closeBtn = document.querySelector('.close-button');
-        const novaPalavraInput = document.getElementById('novaPalavra');
-        const inserirBtn = document.getElementById('inserirPalavra');
-        const modalMessage = document.getElementById('modalMessage');
+        const novaPalavraInput = document.getElementById('editPalavra');
+        const inserirBtn = document.getElementById('salvarEdicao');
+        const modalMessage = document.getElementById('editModalMessage');
 
         function showModal() {
             modal.classList.add('show');
@@ -186,16 +304,21 @@
             }
         }
 
-        addWordBtn.addEventListener('click', showModal);
-        closeBtn.addEventListener('click', hideModal);
+        if (closeBtn) {
+            closeBtn.addEventListener('click', hideModal);
+        }
 
-        novaPalavraInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                inserirPalavra();
-            }
-        });
+        if (novaPalavraInput) {
+            novaPalavraInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    inserirPalavra();
+                }
+            });
+        }
 
-        inserirBtn.addEventListener('click', inserirPalavra);
+        if (inserirBtn) {
+            inserirBtn.addEventListener('click', inserirPalavra);
+        }
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && modal.classList.contains('show')) {
@@ -207,6 +330,35 @@
             if (e.target === modal) {
                 hideModal();
             }
+        });
+
+        // Adicionar código para controle das abas
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove classe active de todos os botões e conteúdos
+                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Adiciona classe active no botão clicado e conteúdo correspondente
+                button.classList.add('active');
+                document.getElementById(`${button.dataset.tab}-content`).classList.add('active');
+            });
+        });
+
+        // Mova as seções de cache e versão para o rodapé da sidebar
+        const sidebar = document.querySelector('.sidebar');
+        const cacheStats = document.getElementById('cache-stats');
+        const versionInfo = document.getElementById('version-info');
+
+        sidebar.appendChild(cacheStats);
+        sidebar.appendChild(versionInfo);
+
+        document.getElementById('editPalavra').addEventListener('click', function() {
+            editPalavra(currentPalavraId);
+        });
+
+        document.getElementById('deletePalavra').addEventListener('click', function() {
+            deletePalavra(currentPalavraId);
         });
     </script>
 </body>

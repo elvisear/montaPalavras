@@ -172,18 +172,6 @@ button:hover {
     100% { transform: rotate(360deg); }
 }
 
-#cache-stats {
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    background: var(--card-bg);
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    font-size: 0.875rem;
-    color: var(--text-color);
-}
-
 .floating-button {
     position: fixed;
     bottom: 20px;
@@ -283,4 +271,141 @@ button:hover {
     background: #d1fae5;
     padding: 0.75rem;
     border-radius: 0.5rem;
+}
+
+#cache-stats,
+#version-info {
+    left: 1rem;
+    margin-top: auto;
+}
+
+#cache-stats {
+    display: flex;
+    justify-content: center;
+    width: 160px;
+    position: fixed;
+    bottom: 30px;
+    font-size: 0.7rem;
+    color: var(--text-color);
+}
+
+#version-info {
+    display: flex;
+    justify-content: center;
+    width: 160px;
+    position: fixed;
+    bottom: 10px;
+    font-size: 0.7rem;
+    color: var(--text-color);
+}
+
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 200px;
+    background: var(--card-bg);
+    border-right: 1px solid #e5e7eb;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.tab-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.tab-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+    text-align: left;
+}
+
+.tab-button:hover {
+    background: var(--bg-color);
+}
+
+.tab-button.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.content-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.content-header {
+    padding: 2rem;
+    background: var(--card-bg);
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.content-body {
+    flex: 1;
+    padding: 2rem;
+    background: var(--bg-color);
+    overflow-y: auto;
+}
+
+.tab-content {
+    display: none;
+    height: 100%;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.content-body {
+    display: flex;
+    gap: 2rem;
+}
+
+.form-section {
+    width: 300px;
+    flex-shrink: 0;
+}
+
+.results-section {
+    flex: 1;
+}
+
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .tab-buttons {
+        flex-direction: row;
+    }
+
+    .content-body {
+        flex-direction: column;
+    }
+
+    .form-section {
+        width: 100%;
+    }
 } 

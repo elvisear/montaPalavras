@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Administração - Filtrador de Palavras</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Administração de Palavras</h1>
+            <a href="/" class="nav-link">Voltar para o Filtrador</a>
+        </header>
+        
+        <main class="admin-content">
+            <div class="toolbar">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Buscar palavras...">
+                    <button id="searchButton">Buscar</button>
+                </div>
+                <div class="pagination-info">
+                    <select id="perPage">
+                        <option value="25">25 por página</option>
+                        <option value="50" selected>50 por página</option>
+                        <option value="100">100 por página</option>
+                        <option value="500">500 por página</option>
+                    </select>
+                </div>
+                <span id="totalInfo"></span>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Palavra Original</th>
+                            <th>Sem Acento</th>
+                            <th>Tamanho</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="palavrasTable">
+                        <!-- Preenchido via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <button id="prevPage" disabled>&lt; Anterior</button>
+                <span id="pageInfo">Página 1 de 1</span>
+                <button id="nextPage" disabled>Próxima &gt;</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Editar Palavra</h2>
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" id="editPalavra" placeholder="Digite a palavra">
+                    <button id="salvarEdicao">Salvar</button>
+                </div>
+                <div id="editModalMessage" class="modal-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html> 
