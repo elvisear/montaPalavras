@@ -51,11 +51,11 @@ function renderTable(palavras) {
                 </select>
             </td>
             <td class="action-buttons">
-                <button class="btn-edit" onclick="editPalavra('${palavra._id}', '${palavra.original}')">
-                    Editar
+                <button class="btn-edit" onclick="editPalavra('${palavra._id}', '${palavra.original}')" title="Editar palavra">
+                    <i class="fas fa-edit"></i>
                 </button>
-                <button class="btn-delete" onclick="deletePalavra('${palavra._id}')">
-                    Excluir
+                <button class="btn-delete" onclick="deletePalavra('${palavra._id}')" title="Excluir palavra">
+                    <i class="fas fa-trash-alt"></i>
                 </button>
             </td>
         </tr>
