@@ -107,35 +107,82 @@ button:hover {
 }
 
 .results-card {
+    background: var(--card-bg);
+    border-radius: 1rem;
+    padding: 1.5rem;
     height: 100%;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
 }
 
 .results-card h2 {
-    color: var(--primary-color);
-    margin-bottom: 1rem;
+    color: var(--text-color);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid rgba(99, 102, 241, 0.1);
 }
 
 .word-list {
     list-style: none;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 1rem;
+    padding: 0.5rem;
 }
 
 .word-list li {
-    background: var(--bg-color);
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
+    background: rgba(99, 102, 241, 0.05);
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
     text-align: center;
     font-weight: 500;
+    color: var(--text-color);
+    transition: all 0.2s ease;
+    border: 1px solid rgba(99, 102, 241, 0.1);
+}
+
+.word-list li:hover {
+    transform: translateY(-2px);
+    background: rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.2);
+    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.1);
+}
+
+.results-info {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: rgba(99, 102, 241, 0.05);
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.results-info .count {
+    font-weight: 600;
+    color: var(--primary-color);
 }
 
 .error {
     color: #dc2626;
-    background: #fee2e2;
+    background: rgba(220, 38, 38, 0.1);
     padding: 1rem;
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
     margin-top: 1rem;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.error:before {
+    content: "⚠️";
+    font-size: 1rem;
 }
 
 @media (max-width: 768px) {
@@ -408,4 +455,4 @@ button:hover {
     .form-section {
         width: 100%;
     }
-} 
+}
